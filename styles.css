@@ -17,36 +17,60 @@ body {
   font-family: 'ClockFont', sans-serif;
 }
 
-/* GRID LAYOUT (fixed 3x3) */
 .clock-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  gap: 0.6vw;
-  width: 98vw;
-  height: 96vh;
-  padding: 1vh 1vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  padding: 5vh 4vw;
+  gap: 3vh;
   box-sizing: border-box;
 }
 
+.secondary-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+  gap: 2vh 2vw;
+  width: min(96vw, 1800px);
+}
+
+.secondary-grid .clock {
+  width: auto;
+  flex: 0 0 calc((100% - 5vw) / 3);
+  max-width: calc((100% - 5vw) / 3);
+}
 /* TILE BASE */
 .clock {
   display: flex;
   flex-direction: column;
   justify-content: center;
   width: 100%;
-  height: 100%;
+  height: 20vh;
+  padding: 1.2vw 1.4vw;
+  min-height: 160px;
+  max-height: 260px;
   box-sizing: border-box;
   border-radius: 2vw;
   border: 0.3vw solid #440099;
   text-align: center;
-  padding: 0.9vw 1.2vw 0.6vw;
+  padding: 1.4vw 1.6vw;
   overflow: hidden;
 }
 
 /* PRIMARY TILE */
 .primarycity {
-  border: 0.9vw outset #C8102E;
+  width: min(68vw, 1200px);
+  height: 30vw;
+  min-height: 16vw;
+  display: grid;
+  align-content: center;
+  flex-direction: column;
+  justify-content: center;
+  border: 0.8vw outset #C8102E;
   background: linear-gradient(180deg, #13001f 0%, #000000 100%);
   outline: 0.25vw solid rgba(255, 255, 255, 0.35);
   outline-offset: -1.25vw;
@@ -61,35 +85,17 @@ h2 {
   position: relative;
   z-index: 3;
   margin: 0 0 0.2vw 0;
-  font-size: 3.2vw;
+  font-size: clamp(1.6rem, 3.2vw, 4rem);
   color: white;
   line-height: 1;
   white-space: nowrap;
   flex-shrink: 0;
-  font-weight: 600;
-}
-
-/* 2 cities */
-.clock.two-cities h2 {
-  font-size: 2.6vw;
-}
-
-/* 3 cities */
-.clock.three-cities h2 {
-  font-size: 2.2vw;
-}
-
-/* primary tile versions */
-.primarycity.two-cities h2 {
-  font-size: 2.8vw;
-}
-
-.primarycity.three-cities h2 {
-  font-size: 2.4vw;
+  font-weight: 700;
 }
 
 .primarycity h2 {
-  font-size: 3.4vw;
+  font-size: clamp(2rem, 3.3vw, 4.2rem);
+  margin: 0 0 0.8vw 0;
   font-weight: 900;
 }
 
@@ -106,7 +112,7 @@ h2 {
 
 /* WEEKDAY */
 .weekday {
-  font-size: 1.4vw;
+  font-size: clamp(0.8rem, 1.4vw, 1.6rem);
   text-transform: uppercase;
   color: #C5B4E3;
   margin: 0;
@@ -123,24 +129,24 @@ h2 {
 }
 
 .primarycity .weekday {
-  font-size: 1.7vw;
+  font-size: clamp(0.9rem, 1.5vw, 1.8rem);
+  margin: 0 0 0.2vw 0;
 }
 
 /* TIME */
 .time {
-  font-size: 8.2vw;
+  font-size: clamp(3.5rem, 8.8vw, 10rem);
   transform: scaleY(0.9);
   letter-spacing: -0.35vw;
   line-height: 0.9;
   margin: 0;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .primarycity .time {
-  font-size: 8.6vw;
+  font-size: clamp(4.5rem, 9.5vw, 11rem);
   font-weight: 900;
 }
-
 /* COLORS */
 .am-time {
   color: #440099;

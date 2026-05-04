@@ -39,7 +39,7 @@ const cities = [
   { code: 'PPT', name: 'Tahiti', timeZone: 'Pacific/Tahiti', region: 'Pacific Islands' }
 ];
 
-const DEFAULT_SELECTED = ['AKL', 'NRT', 'LAX'];
+const DEFAULT_SELECTED = ['AKL', 'SYD', 'NRT', 'LAX'];
 const DEFAULT_PRIMARY = 'AKL';
 
 const gridPositions = {
@@ -59,7 +59,7 @@ let primaryCode = localStorage.getItem('primaryCity') || DEFAULT_PRIMARY;
 
 selectedCodes = selectedCodes.filter(code => getCity(code));
 
-if (selectedCodes.length < 3) {
+if (selectedCodes.length < 4) {
   selectedCodes = [...DEFAULT_SELECTED];
 }
 
@@ -175,10 +175,12 @@ function groupSelectedCities() {
     .map(group => ({
       ...group,
       label:
-        group.cities.length > 2
-          ? `${group.cities[0].code} / ${group.cities[1].code} +${group.cities.length - 2}`
-          : group.cities.map(city => city.code).join(' / '),
-      isPrimary: group.cities.some(city => city.code === primaryCode)
+      group.cities.length === 1
+        ? group.cities[0].code
+        : group.cities.length === 2
+          ? `${group.cities[0].code} / ${group.cities[1].code}`
+          :group.cities.map(city => city.code).join(' / '),
+          isPrimary: group.cities.some(city => city.code === primaryCode)
     }))
     .sort((a, b) => b.offset - a.offset);
 }
@@ -186,68 +188,88 @@ function groupSelectedCities() {
 function renderClocks() {
   clockContainer.innerHTML = '';
 
-  const groups = groupSelectedCities();
-  const positions = gridPositions[groups.length] || gridPositions[9];
+  renderedGroups = groupSelectedCities();
 
-  groups.forEach((group, index) => {
-    const clock = document.createElement('div');
-    clock.className = group.isPrimary ? 'clock primarycity' : 'clock';
-    clock.id = `clock${index + 1}`;
-    clock.style.gridArea = gridAreaFromNumber(positions[index]);
+  const primaryGroup =
+    renderedGroups.find(group => group.isPrimary) || renderedGroups[0];
 
-    clock.innerHTML = `
-      <h2>${group.label}</h2>
-      <div class="region">
-        <div class="weekday" id="weekday${index}"></div>
-        <div class="time" id="time${index}"></div>
-      </div>
-    `;
+  const secondaryGroups =
+    renderedGroups.filter(group => group !== primaryGroup);
 
-    clockContainer.appendChild(clock);
+  clockContainer.appendChild(createClockTile(primaryGroup, true));
+
+  const secondaryGrid = document.createElement('div');
+	secondaryGrid.className = `secondary-grid count-${secondaryGroups.length % 3 || 3}`;
+
+  secondaryGroups.forEach(group => {
+    secondaryGrid.appendChild(createClockTile(group, false));
   });
+
+  clockContainer.appendChild(secondaryGrid);
 
   updateTime();
 }
 
-function updateTime() {
-  const groups = groupSelectedCities();
-  const now = new Date();
+function createClockTile(group, isPrimary) {
+  const clock = document.createElement('div');
+  clock.className = isPrimary ? 'clock primarycity' : 'clock';
 
-  groups.forEach((group, index) => {
-    const timeOptions = {
+  clock.innerHTML = `
+    <h2>${group.label}</h2>
+    <div class="region">
+      <div class="weekday"></div>
+      <div class="time"></div>
+    </div>
+  `;
+
+  return clock;
+}
+
+function updateTime() {
+  const now = new Date();
+  const tiles = document.querySelectorAll('.clock');
+
+  const primaryGroup =
+    renderedGroups.find(group => group.isPrimary) || renderedGroups[0];
+
+  const orderedGroups = [
+    primaryGroup,
+    ...renderedGroups.filter(group => group !== primaryGroup)
+  ];
+
+  orderedGroups.forEach((group, index) => {
+    const tile = tiles[index];
+    if (!tile) return;
+
+    const timeElement = tile.querySelector('.time');
+    const weekdayElement = tile.querySelector('.weekday');
+
+    const timeString = new Intl.DateTimeFormat('en-NZ', {
+      timeZone: group.timeZone,
       hour: '2-digit',
       minute: '2-digit',
+      hourCycle: 'h23'
+    }).format(now);
+
+    const weekdayString = new Intl.DateTimeFormat('en-NZ', {
       timeZone: group.timeZone,
-      hour12: false
-    };
+      weekday: 'long'
+    }).format(now);
 
-    const weekdayOptions = {
-      weekday: 'long',
-      timeZone: group.timeZone
-    };
+    const hourString = new Intl.DateTimeFormat('en-NZ', {
+      timeZone: group.timeZone,
+      hour: '2-digit',
+      hourCycle: 'h23'
+    }).format(now);
 
-    const timeString = now.toLocaleTimeString('en-NZ', timeOptions);
-    const weekdayString = now.toLocaleDateString('en-NZ', weekdayOptions);
-    const hours = parseInt(timeString.slice(0, 2), 10);
-
-    const clockTile = document.getElementById(`clock${index + 1}`);
-    const timeElement = document.getElementById(`time${index}`);
-    const weekdayElement = document.getElementById(`weekday${index}`);
-
-    if (!clockTile || !timeElement || !weekdayElement) return;
-
-    if (hours >= 7 && hours < 18) {
-      clockTile.classList.add('daytime');
-      timeElement.className = 'time am-time';
-      weekdayElement.className = 'weekday weekday-daytime';
-    } else {
-      clockTile.classList.remove('daytime');
-      timeElement.className = 'time pm-time';
-      weekdayElement.className = 'weekday weekday-nighttime';
-    }
+    const hours = Number(hourString);
 
     timeElement.textContent = timeString;
     weekdayElement.textContent = weekdayString;
+
+    tile.classList.toggle('daytime', hours >= 7 && hours < 18);
+    timeElement.className = `time ${hours >= 7 && hours < 18 ? 'am-time' : 'pm-time'}`;
+    weekdayElement.className = `weekday ${hours >= 7 && hours < 18 ? 'weekday-daytime' : 'weekday-nighttime'}`;
   });
 }
 
@@ -307,15 +329,15 @@ function renderSelector() {
         const wouldAddNewTile = !selectedOffsets.has(cityOffset);
 
         if (checkbox.checked) {
-          if (wouldAddNewTile && selectedOffsets.size >= 9) {
+          if (wouldAddNewTile && selectedOffsets.size >= 10) {
             checkbox.checked = false;
-            showMessage('Maximum 9 timezone tiles only.');
+            showMessage('Maximum 10 timezone tiles only.');
             return;
           }
 
-          if (sameTimezoneSelected.length >= 3) {
+          if (sameTimezoneSelected.length >= 4) {
             checkbox.checked = false;
-            showMessage('Maximum 3 cities per shared timezone.');
+            showMessage('Maximum 4 cities per shared timezone.');
             return;
           }
 
