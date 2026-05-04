@@ -7,8 +7,12 @@
   <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
-
+<div class="viewer">
 <button id="settingsBtn" class="settings-btn">⚙</button>
+
+  <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶</button>
+
+
 
 <div id="clockContainer" class="clock-container"></div>
 
@@ -16,7 +20,7 @@
 
   <div class="settings-header">
     <h3>Select cities</h3>
-    <button id="closeSettingsBtn">X</button>
+    <button id="closeSettingsBtn">x</button>
   </div>
 
   <div class="top-controls">
@@ -30,7 +34,7 @@
   <div id="message" class="message"></div>
   <div id="citySelector" class="city-selector"></div>
 </div>
-
+</div>
 <script src="scripts.js"></script>
 
 </body>

@@ -225,6 +225,18 @@ function createClockTile(group, isPrimary) {
   return clock;
 }
 
+function toggleFullscreen() {
+  const viewer = document.querySelector('.viewer');
+
+  if (!viewer) return;
+
+  if (!document.fullscreenElement) {
+    viewer.requestFullscreen().catch(console.error);
+  } else {
+    document.exitFullscreen().catch(console.error);
+  }
+}
+
 function updateTime() {
   const now = new Date();
   const tiles = document.querySelectorAll('.clock');
@@ -335,9 +347,9 @@ function renderSelector() {
             return;
           }
 
-          if (sameTimezoneSelected.length >= 4) {
+          if (sameTimezoneSelected.length >= 3) {
             checkbox.checked = false;
-            showMessage('Maximum 4 cities per shared timezone.');
+            showMessage('Maximum 3 cities per shared timezone.');
             return;
           }
 
