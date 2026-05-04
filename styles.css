@@ -1,18 +1,17 @@
 @font-face {
   font-family: 'ClockFont';
-  src: url('clockfont.otf') format('truetype');
+  src: url('clockfont.otf') format('opentype');
 }
 
 body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  margin: 0;
+  height: 100%;
   background-color: black;
   color: #C5B4E3;
   overflow: hidden;
-  font: ClockFont;
+  font-family: 'ClockFont';
 }
 
 .clock-container {
@@ -23,7 +22,7 @@ body {
   width: 100vw;
   height: 100vh;
   padding: 5vh 4vw;
-  gap: 3vh;
+  gap: 3vw;
   box-sizing: border-box;
 }
 
@@ -57,14 +56,13 @@ body {
   text-align: center;
   padding: 1.4vw 1.6vw;
   overflow: hidden;
-  font: ClockFont;
 }
 
 /* PRIMARY TILE */
 .primarycity {
   width: min(68vw, 1200px);
-  height: 30vw;
-  min-height: 16vw;
+  height: 100fr;
+  min-height: 14vw;
   display: grid;
   align-content: center;
   flex-direction: column;
@@ -73,7 +71,6 @@ body {
   background: linear-gradient(180deg, #13001f 0%, #000000 100%);
   outline: 0.25vw solid rgba(255, 255, 255, 0.35);
   outline-offset: -1.25vw;
-  font: ClockFont;
 }
 
 .primarycity.daytime {
@@ -84,21 +81,19 @@ body {
 h2 {
   position: relative;
   z-index: 3;
-  margin: 0 0 0.2vw 0;
-  font-size: clamp(1.6rem, 3.2vw, 4rem);
+  margin: 0 0 -5% 0;
+  font-size: clamp(1.6rem, 2.5vw, 4rem);
   color: white;
   line-height: 1;
   white-space: nowrap;
   flex-shrink: 0;
-  font-weight: 700;
-  font: ClockFont;
+  font-weight: 500;
 }
 
 .primarycity h2 {
-  font-size: clamp(2rem, 3.3vw, 4.2rem);
-  margin: 0 0 0.8vw 0;
-  font-weight: 900;
-  font: ClockFont;
+  font-size: clamp(2rem, 3fr, 4.2rem);
+  margin: 0 0 -6% 0;
+  font-weight: 700;
 }
 
 .region {
@@ -112,9 +107,8 @@ h2 {
   font-size: clamp(0.8rem, 1.4vw, 1.6rem);
   text-transform: uppercase;
   color: #C5B4E3;
-  margin: 0;
+  margin: 6% 0 -2% 0;
   line-height: 1;
-  font: ClockFont;
 }
 
 .weekday-daytime {
@@ -127,24 +121,23 @@ h2 {
 
 .primarycity .weekday {
   font-size: clamp(0.9rem, 1.5vw, 1.8rem);
-  margin: 0 0 0.2vw 0;
+  margin: 6% 0 -2% 0;
 }
 
 /* TIME */
 .time {
-  font-size: clamp(3.5rem, 8.8vw, 10rem);
+  font-size: clamp(3.5rem, 8vw, 10rem);
   transform: scaleY(0.9);
-  letter-spacing: -0.35vw;
+  letter-spacing: -0.3vw;
   line-height: 0.9;
-  margin: 0;
-  font-weight: 700;
-  font: ClockFont;
+  margin: 0 0 -5% 0;
+  font-weight: 500;
 }
 
 .primarycity .time {
   font-size: clamp(4.5rem, 9.5vw, 11rem);
   font-weight: 900;
-  font: ClockFont;
+  margin: 0 0 -4% 0;
 }
 
 .am-time {
@@ -390,50 +383,6 @@ h2 {
     align-items: stretch;
   }
 }
-
-/* 16:9 screens */
-@media (min-aspect-ratio: 16 / 10) and (max-aspect-ratio: 2 / 1) {
-  .primarycity {
-    width: min(62vw, 1150px);
-    height: 36vh;
-  }
-
-  .clock {
-    height: 20vh;
-  }
-}
-
-/* 21:9 ultrawide */
-@media (min-aspect-ratio: 2 / 1) {
-  .clock-container {
-    padding: 5vh 6vw;
-    gap: 3vh;
-  }
-
-  .primarycity {
-    width: 48vw;
-    height: 26vh;
-  }
-
-  .secondary-grid {
-    width: 92vw;
-    gap: 2vh 2vw;
-  }
-
-  .secondary-grid .clock {
-    flex: 0 0 calc((100% - 7vw) / 4);
-    max-width: calc((100% - 7vw) / 4);
-  }
-
-  .clock {
-    height: 20vh;
-  }
-
-  .time {
-    font-size: clamp(2.5rem, 5.8vw, 8rem);
-  }
-}
-
 /* Mobile portrait */
 @media (max-width: 700px) {
   body {
@@ -443,7 +392,7 @@ h2 {
 
   .clock-container {
     height: auto;
-    min-height: 100vh;
+    min-height: 100vw;
     justify-content: flex-start;
     padding: 4vw;
     gap: 3vw;
@@ -451,7 +400,7 @@ h2 {
 
   .primarycity,
   .clock {
-    width: 100%;
+    width: 90%;
     height: 28vw;
     min-height: 120px;
     max-height: none;
@@ -459,23 +408,22 @@ h2 {
 
   .secondary-grid {
     grid-template-columns: 1fr;
-    width: 100%;
+    width: 140%;
     gap: 3vw;
   }
 
   h2 {
-    font-size: 9vw;
+    font-size: 4vw;
   }
 
   .time {
-    font-size: 20vw;
+    font-size: 16vw;
   }
 
   .weekday {
-    font-size: 4vw;
+    font-size: 2.5vw;
   }
 }
-
 /* Mobile landscape */
 @media (max-height: 500px) and (orientation: landscape) {
   .clock-container {
@@ -506,5 +454,39 @@ h2 {
 
   .time {
     font-size: 7vw;
+  }
+}
+
+/* 21:9 ultrawide */
+@media (min-aspect-ratio: 2 / 1) {
+  .clock-container {
+    padding: 5vh 6vw;
+    gap: 3vh;
+  }
+
+  .primarycity {
+    width: 42vw;
+    height: 10vh;
+    gap: 1vw 3vw;
+  }
+
+.secondary-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2vw 3vw;
+}
+
+.secondary-grid .clock {
+  flex: unset !important;
+  max-width: unset !important;
+  width: 100%;
+}
+
+  .clock {
+    height: clamp(120px, 8vw, 300px);
+  }
+
+  .time {
+    font-size: clamp(2.5rem, 4.5vw, 8rem);
   }
 }
