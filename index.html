@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>World Clock</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<button id="settingsBtn" class="settings-btn">⚙</button>
+
+<div id="clockContainer" class="clock-container"></div>
+
+<div id="settingsPanel" class="settings-panel hidden">
+
+  <div class="settings-header">
+    <h3>Select cities</h3>
+    <button id="closeSettingsBtn">×</button>
+  </div>
+
+  <div class="top-controls">
+    <select id="primarySelect"></select>
+    <button id="resetBtn" class="reset-btn">Reset</button>
+  </div>
+
+  <p class="hint">
+    Min 3 cities • Max 9 timezone tiles • Max 3 cities per shared timezone
+  </p>
+
+  <div id="message" class="message"></div>
+
+  <div id="citySelector" class="city-selector"></div>
+
+</div>
+
+<script src="scripts.js"></script>
+</body>
+</html>

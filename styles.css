@@ -1,0 +1,331 @@
+@font-face {
+  font-family: 'ClockFont';
+  src: url('clockfont.otf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: black;
+  color: #C5B4E3;
+  overflow: hidden;
+  font-family: 'ClockFont', sans-serif;
+}
+
+/* GRID LAYOUT (fixed 3x3) */
+.clock-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 0.6vw;
+  width: 98vw;
+  height: 96vh;
+  padding: 1vh 1vw;
+  box-sizing: border-box;
+}
+
+/* TILE BASE */
+.clock {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  border-radius: 2vw;
+  border: 0.3vw solid #440099;
+  text-align: center;
+  padding: 0.9vw 1.2vw 0.6vw;
+  overflow: hidden;
+}
+
+/* PRIMARY TILE */
+.primarycity {
+  border: 0.9vw outset #C8102E;
+  background: linear-gradient(180deg, #13001f 0%, #000000 100%);
+  outline: 0.25vw solid rgba(255, 255, 255, 0.35);
+  outline-offset: -1.25vw;
+}
+
+.primarycity.daytime {
+  background: linear-gradient(180deg, #fff8f8 0%, #FFFFF0 100%);
+}
+
+/* TITLE */
+h2 {
+  position: relative;
+  z-index: 3;
+  margin: 0 0 0.2vw 0;
+  font-size: 3.2vw;
+  color: white;
+  line-height: 1;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-weight: 600;
+}
+
+/* 2 cities */
+.clock.two-cities h2 {
+  font-size: 2.6vw;
+}
+
+/* 3 cities */
+.clock.three-cities h2 {
+  font-size: 2.2vw;
+}
+
+/* primary tile versions */
+.primarycity.two-cities h2 {
+  font-size: 2.8vw;
+}
+
+.primarycity.three-cities h2 {
+  font-size: 2.4vw;
+}
+
+.primarycity h2 {
+  font-size: 3.4vw;
+  font-weight: 900;
+}
+
+/* REGION WRAP */
+.region {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+/* WEEKDAY */
+.weekday {
+  font-size: 1.4vw;
+  text-transform: uppercase;
+  color: #C5B4E3;
+  margin: 0;
+  line-height: 1;
+  flex-shrink: 1;
+}
+
+.weekday-daytime {
+  color: #C5B4E3;
+}
+
+.weekday-nighttime {
+  color: #BBE5E9;
+}
+
+.primarycity .weekday {
+  font-size: 1.7vw;
+}
+
+/* TIME */
+.time {
+  font-size: 8.2vw;
+  transform: scaleY(0.9);
+  letter-spacing: -0.35vw;
+  line-height: 0.9;
+  margin: 0;
+  font-weight: 600;
+}
+
+.primarycity .time {
+  font-size: 8.6vw;
+  font-weight: 900;
+}
+
+/* COLORS */
+.am-time {
+  color: #440099;
+}
+
+.pm-time {
+  color: #00B0B9;
+}
+
+/* PRIMARY COLORS */
+.primarycity .am-time {
+  color: #221551;
+}
+
+.primarycity .pm-time {
+  color: #008392;
+}
+
+/* DAY BACKGROUND */
+.daytime {
+  background-color: #FFFFF0;
+}
+
+.daytime h2 {
+  color: black;
+}
+
+/* SETTINGS BUTTON */
+.settings-btn {
+  position: fixed;
+  top: 1vw;
+  right: 1vw;
+  z-index: 20;
+  background: #440099;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 3vw;
+  height: 3vw;
+  font-size: 1.5vw;
+  cursor: pointer;
+}
+
+/* SETTINGS PANEL */
+.settings-panel {
+  position: fixed;
+  top: 4vw;
+  right: 1vw;
+  width: 38vw;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: #111;
+  border: 0.2vw solid #440099;
+  border-radius: 1vw;
+  padding: 1vw;
+  z-index: 30;
+  color: white;
+  box-shadow: 0 0 1.5vw rgba(0, 0, 0, 0.7);
+}
+
+.hidden {
+  display: none;
+}
+
+/* HEADER */
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.settings-header h3 {
+  margin: 0 0 0.5vw;
+}
+
+.settings-panel h3 {
+  margin: 0.8vw 0 0.4vw;
+  font-size: 1vw;
+}
+
+.top-controls {
+  display: flex;
+  gap: 0.5vw;
+  align-items: center;
+  margin-bottom: 0.6vw;
+}
+
+/* CLOSE BUTTON */
+#closeSettingsBtn {
+  background: #C8102E;
+  color: white;
+  border: none;
+  font-size: 1.5vw;
+  cursor: pointer;
+  border-radius: 0.4vw;
+}
+
+/* HINT */
+.hint {
+  font-size: 0.85vw;
+  color: #BBE5E9;
+  margin: 0.8vw 0 0.5vw;
+}
+
+/* SELECT */
+#primarySelect {
+  width: 100%;
+  padding: 0.5vw;
+  background: black;
+  color: white;
+  border: 1px solid #440099;
+  border-radius: 0.4vw;
+  margin-bottom: 0.6vw;
+}
+
+/* RESET BUTTON */
+.reset-btn {
+  width: 100%;
+  margin-top: 0.3vw;
+  margin-bottom: 0.4vw;
+  padding: 0.6vw;
+  background: #C8102E;
+  color: white;
+  border: none;
+  border-radius: 0.5vw;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.reset-btn:hover {
+  background: #e31436;
+}
+
+/* MESSAGE */
+.message {
+  color: #ffb3b3;
+  background: rgba(200, 16, 46, 0.12);
+  border: 1px solid rgba(200, 16, 46, 0.35);
+  border-radius: 0.4vw;
+  padding: 0.35vw 0.5vw;
+  margin: 0.5vw 0;
+  min-height: 1em;
+  font-size: 0.8vw;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.message.show {
+  opacity: 1;
+}
+
+/* CITY SELECTOR */
+.city-selector {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.8vw;
+  margin-bottom: 1vw;
+}
+
+.region-block {
+  break-inside: avoid;
+}
+
+.region-title {
+  color: #BBE5E9;
+  font-weight: bold;
+  font-size: 0.95vw;
+  margin: 0.4vw 0;
+  border-bottom: 1px solid #440099;
+  padding-bottom: 0.25vw;
+}
+
+.region-options {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.35vw;
+}
+
+.city-option {
+  font-size: 0.85vw;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.city-option input {
+  transform: scale(1.1);
+  margin-right: 0.4vw;
+}
