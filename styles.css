@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'ClockFont';
-  src: url('clockfont.otf') format('opentype');
+  src: url('sans-medium.ttf') format('truetype');
 }
 
 body {
@@ -74,7 +74,7 @@ body {
 }
 
 .primarycity.daytime {
-  background: linear-gradient(180deg, #fff8f8 0%, #FFFFF0 100%);
+  background: linear-gradient(180deg, #F2F0F7 0%, #DCD6E8 100%);
 }
 
 /* TITLE */
@@ -112,7 +112,7 @@ h2 {
 }
 
 .weekday-daytime {
-  color: #C5B4E3;
+  color: #440099;
 }
 
 .weekday-nighttime {
@@ -132,6 +132,7 @@ h2 {
   line-height: 0.9;
   margin: 0 0 -5% 0;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .primarycity .time {
@@ -141,11 +142,12 @@ h2 {
 }
 
 .am-time {
-  color: #440099;
+/*   color: #440099; */
+  color: #00B060;
 }
 
 .pm-time {
-  color: #00B0B9;
+  color: #c5b4e3;
 }
 
 .primarycity .am-time {
@@ -153,15 +155,26 @@ h2 {
 }
 
 .primarycity .pm-time {
-  color: #008392;
+  color: #00b0b9;
+}
+
+body.format-12 .time{
+  font-size: clamp(3rem, 7vw, 9rem);
+}
+
+.ampm {
+  font-size: 0.35em;
+  vertical-align: super;
+  margin-left: 0.1em;
+  letter-spacing: 0;
 }
 
 .daytime {
-  background-color: #FFFFF0;
+  background-color: #D6DFDA;
 }
 
 .daytime h2 {
-  color: black;
+  color: #221551;
 }
 
 /* SETTINGS BUTTON */
@@ -236,7 +249,7 @@ h2 {
 
 /* HINT */
 .hint {
-  font-size: 0.85vw;
+  font-size: 0.85rem;
   color: #BBE5E9;
   margin: 0.8vw 0 0.5vw;
 }
@@ -274,6 +287,28 @@ h2 {
   position: relative;
 }
 
+.format-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0.7rem 0;
+  font-family: Arial, sans-serif;
+  font-size: 0.9rem;
+}
+
+.format-toggle span {
+  color: #BBE5E9;
+  font-weight: bold;
+}
+
+.format-toggle label {
+  color: white;
+  cursor: pointer;
+}
+
+.format-toggle input {
+  margin-right: 0.25rem;
+}
 /* Fullscreen button */
 .fullscreen-btn {
   width: 3vw;
@@ -333,7 +368,7 @@ h2 {
 .region-title {
   color: #BBE5E9;
   font-weight: bold;
-  font-size: 0.95vw;
+  font-size: 1.1rem;
   margin: 0.4vw 0;
   border-bottom: 1px solid #440099;
   padding-bottom: 0.25vw;
@@ -348,14 +383,15 @@ h2 {
 .city-option {
   display: block;
   color: white;
-  font-size: 0.85vw;
+  font-size: 100%;
+  line-height: 1.4;
   cursor: pointer;
   white-space: nowrap;
 }
 
 .city-option input {
-  transform: scale(1.1);
-  margin-right: 0.4vw;
+  transform: scale(1.2);
+  margin-right: 0.6rem;
 }
 
 /* MOBILE SETTINGS */
@@ -389,7 +425,6 @@ h2 {
     overflow-y: auto;
     align-items: flex-start;
   }
-
   .clock-container {
     height: auto;
     min-height: 100vw;
@@ -397,7 +432,6 @@ h2 {
     padding: 4vw;
     gap: 3vw;
   }
-
   .primarycity,
   .clock {
     width: 90%;
@@ -405,23 +439,26 @@ h2 {
     min-height: 120px;
     max-height: none;
   }
-
   .secondary-grid {
     grid-template-columns: 1fr;
     width: 140%;
     gap: 3vw;
   }
-
   h2 {
     font-size: 4vw;
   }
-
   .time {
     font-size: 16vw;
   }
-
   .weekday {
     font-size: 2.5vw;
+  }
+    .city-option {
+    font-size: 1.25rem;
+  }
+
+  .region-title {
+    font-size: 1.3rem;
   }
 }
 /* Mobile landscape */
@@ -430,62 +467,54 @@ h2 {
     padding: 1vw;
     gap: 0.6vw;
   }
-
   .primarycity {
     width: 42vw;
     height: 24vh;
     min-height: 90px;
   }
-
   .secondary-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     width: 96vw;
     gap: 0.6vw;
   }
-
   .clock {
     height: 24vh;
     min-height: 80px;
   }
-
   .weekday {
     display: none;
   }
-
   .time {
     font-size: 7vw;
   }
 }
-
 /* 21:9 ultrawide */
 @media (min-aspect-ratio: 2 / 1) {
   .clock-container {
     padding: 5vh 6vw;
     gap: 3vh;
   }
-
   .primarycity {
     width: 42vw;
     height: 10vh;
     gap: 1vw 3vw;
   }
-
-.secondary-grid {
-  display: grid !important;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2vw 3vw;
-}
-
-.secondary-grid .clock {
-  flex: unset !important;
-  max-width: unset !important;
-  width: 100%;
-}
-
+  .secondary-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    gap: 2vh 1vw;
+    width: min(82vw, 1500px);
+  }
+  .secondary-grid .clock {
+    width: auto;
+    flex: 0 0 calc((100% - 5vw) / 3);
+    max-width: calc((100% - 5vw) / 3);
+  }
   .clock {
     height: clamp(120px, 8vw, 300px);
   }
-
   .time {
     font-size: clamp(2.5rem, 4.5vw, 8rem);
   }

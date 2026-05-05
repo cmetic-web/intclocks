@@ -28,8 +28,22 @@
     <button id="resetBtn" class="reset-btn">Reset</button>
   </div>
 
+  <div class="format-toggle">
+    <span>Time format</span>
+
+    <label>
+      <input type="radio" name="timeFormat" value="24" id="format24">
+      24:00
+    </label>
+
+    <label>
+      <input type="radio" name="timeFormat" value="12" id="format12">
+      12:00
+    </label>
+  </div>
+
   <p class="hint">
-    Min 3 & Max 10 timezones • Max 3 cities per shared timezone
+    min 3  &  max 10 timezones • Max 3 cities per shared timezone
   </p>
   <div id="message" class="message"></div>
   <div id="citySelector" class="city-selector"></div>

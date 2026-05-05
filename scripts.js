@@ -1,8 +1,8 @@
 const cities = [
   // New Zealand
   { code: 'AKL', name: 'Auckland', timeZone: 'Pacific/Auckland', region: 'New Zealand' },
-  { code: 'WLG', name: 'Wellington', timeZone: 'Pacific/Auckland', region: 'New Zealand' },
   { code: 'CHC', name: 'Christchurch', timeZone: 'Pacific/Auckland', region: 'New Zealand' },
+  { code: 'NZD', name: 'New Zealand', timeZone: 'Pacific/Auckland', region: 'New Zealand' },
 
   // Asia
   { code: 'TPE', name: 'Taipei', timeZone: 'Asia/Taipei', region: 'Asia' },
@@ -41,31 +41,14 @@ const cities = [
 
 const DEFAULT_SELECTED = ['AKL', 'SYD', 'NRT', 'LAX'];
 const DEFAULT_PRIMARY = 'AKL';
-
-const gridPositions = {
-  1: [5],
-  2: [4, 6],
-  3: [4, 5, 6],
-  4: [2, 4, 6, 8],
-  5: [2, 4, 5, 6, 8],
-  6: [1, 2, 3, 4, 5, 6],
-  7: [1, 2, 3, 4, 5, 6, 8],
-  8: [1, 2, 3, 4, 5, 6, 7, 9],
-  9: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-};
+const MIN_CITIES = 3;
+const MAX_TILES = 10;
+const MAX_CITIES_PER_TIMEZONE = 3;
 
 let selectedCodes = JSON.parse(localStorage.getItem('selectedCities')) || DEFAULT_SELECTED;
 let primaryCode = localStorage.getItem('primaryCity') || DEFAULT_PRIMARY;
-
-selectedCodes = selectedCodes.filter(code => getCity(code));
-
-if (selectedCodes.length < 4) {
-  selectedCodes = [...DEFAULT_SELECTED];
-}
-
-if (!selectedCodes.includes(primaryCode)) {
-  primaryCode = selectedCodes[0];
-}
+let timeFormat = localStorage.getItem('timeFormat') || '24';
+let renderedGroups = [];
 
 const clockContainer = document.getElementById('clockContainer');
 const citySelector = document.getElementById('citySelector');
@@ -75,6 +58,64 @@ const settingsBtn = document.getElementById('settingsBtn');
 const settingsPanel = document.getElementById('settingsPanel');
 const closeSettingsBtn = document.getElementById('closeSettingsBtn');
 const resetBtn = document.getElementById('resetBtn');
+const format24 = document.getElementById('format24');
+const format12 = document.getElementById('format12');
+
+selectedCodes = selectedCodes.filter(code => getCity(code));
+
+if (selectedCodes.length < MIN_CITIES) {
+  selectedCodes = [...DEFAULT_SELECTED];
+}
+
+if (!selectedCodes.includes(primaryCode)) {
+  primaryCode = selectedCodes[0];
+}
+
+function getMaxTiles() {
+  const isUltraWide = window.matchMedia('(min-aspect-ratio: 2 / 1)').matches;
+  const isMobile = window.matchMedia('(max-width: 700px)').matches;
+
+  return isUltraWide || isMobile ? 9 : 10;
+}
+
+function saveSettings() {
+  localStorage.setItem('selectedCities', JSON.stringify(selectedCodes));
+  localStorage.setItem('primaryCity', primaryCode);
+  localStorage.setItem('timeFormat', timeFormat);
+}
+
+function getCity(code) {
+  return cities.find(city => city.code === code);
+}
+
+function applyTimeFormatClass() {
+  document.body.classList.toggle('format-12', timeFormat === '12');
+}
+
+function renderTimeFormatToggle() {
+  if (!format24 || !format12) return;
+
+  format24.checked = timeFormat === '24';
+  format12.checked = timeFormat === '12';
+}
+
+if (format24 && format12) {
+  format24.addEventListener('change', () => {
+    timeFormat = '24';
+    saveSettings();
+    applyTimeFormatClass();
+    renderTimeFormatToggle();
+    updateTime();
+  });
+
+  format12.addEventListener('change', () => {
+    timeFormat = '12';
+    saveSettings();
+    applyTimeFormatClass();
+    renderTimeFormatToggle();
+    updateTime();
+  });
+}
 
 settingsBtn.addEventListener('click', event => {
   event.stopPropagation();
@@ -104,14 +145,71 @@ resetBtn.addEventListener('click', () => {
   showMessage('Reset to default cities.');
 });
 
-function saveSettings() {
-  localStorage.setItem('selectedCities', JSON.stringify(selectedCodes));
-  localStorage.setItem('primaryCity', primaryCode);
+function toggleFullscreen() {
+  const viewer = document.querySelector('.viewer');
+
+  if (!viewer) return;
+
+  if (!document.fullscreenElement) {
+    viewer.requestFullscreen().catch(console.error);
+  } else {
+    document.exitFullscreen().catch(console.error);
+  }
 }
 
-function getCity(code) {
-  return cities.find(city => city.code === code);
+function getOffsetMinutes(timeZone) {
+  const now = new Date();
+  
+  const parts = new Intl.DateTimeFormat('en-NZ', {
+    timeZone,
+    hourCycle: 'h23',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  }).formatToParts(now);
+
+  const data = {};
+  parts.forEach(part => {
+    if (part.type !== 'literal') {
+      data[part.type] = part.value;
+    }
+  });
+
+  const asUTC = Date.UTC(
+    Number(data.year),
+    Number(data.month) - 1,
+    Number(data.day),
+    Number(data.hour),
+    Number(data.minute),
+    Number(data.second)
+  );
+
+  return Math.round((asUTC - now.getTime()) / 60000);
 }
+
+function renderTimeFormatToggle() {
+  format24.checked = timeFormat === '24';
+  format12.checked = timeFormat === '12';
+}
+
+format24.addEventListener('change', () => {
+  timeFormat = '24';
+  localStorage.setItem('timeFormat', timeFormat);
+  document.body.classList.toggle('format-12', timeFormat === '12');
+  renderTimeFormatToggle();
+  updateTime();
+});
+
+format12.addEventListener('change', () => {
+  timeFormat = '12';
+  localStorage.setItem('timeFormat', timeFormat);
+  document.body.classList.toggle('format-12', timeFormat === '12');
+  renderTimeFormatToggle();
+  updateTime();
+});
 
 function gridAreaFromNumber(number) {
   const row = Math.ceil(number / 3);
@@ -174,40 +272,10 @@ function groupSelectedCities() {
   return Object.values(groups)
     .map(group => ({
       ...group,
-      label:
-      group.cities.length === 1
-        ? group.cities[0].code
-        : group.cities.length === 2
-          ? `${group.cities[0].code} / ${group.cities[1].code}`
-          :group.cities.map(city => city.code).join(' / '),
-          isPrimary: group.cities.some(city => city.code === primaryCode)
+      label: group.cities.map(city => city.code).join(' / '),
+      isPrimary: group.cities.some(city => city.code === primaryCode)
     }))
     .sort((a, b) => b.offset - a.offset);
-}
-
-function renderClocks() {
-  clockContainer.innerHTML = '';
-
-  renderedGroups = groupSelectedCities();
-
-  const primaryGroup =
-    renderedGroups.find(group => group.isPrimary) || renderedGroups[0];
-
-  const secondaryGroups =
-    renderedGroups.filter(group => group !== primaryGroup);
-
-  clockContainer.appendChild(createClockTile(primaryGroup, true));
-
-  const secondaryGrid = document.createElement('div');
-	secondaryGrid.className = `secondary-grid count-${secondaryGroups.length % 3 || 3}`;
-
-  secondaryGroups.forEach(group => {
-    secondaryGrid.appendChild(createClockTile(group, false));
-  });
-
-  clockContainer.appendChild(secondaryGrid);
-
-  updateTime();
 }
 
 function createClockTile(group, isPrimary) {
@@ -225,16 +293,29 @@ function createClockTile(group, isPrimary) {
   return clock;
 }
 
-function toggleFullscreen() {
-  const viewer = document.querySelector('.viewer');
+function renderClocks() {
+  clockContainer.innerHTML = '';
 
-  if (!viewer) return;
+  renderedGroups = groupSelectedCities();
 
-  if (!document.fullscreenElement) {
-    viewer.requestFullscreen().catch(console.error);
-  } else {
-    document.exitFullscreen().catch(console.error);
-  }
+  const primaryGroup =
+    renderedGroups.find(group => group.isPrimary) || renderedGroups[0];
+
+  const secondaryGroups =
+    renderedGroups.filter(group => group !== primaryGroup);
+
+  clockContainer.appendChild(createClockTile(primaryGroup, true));
+
+  const secondaryGrid = document.createElement('div');
+	secondaryGrid.className = `secondary-grid secondary-count-${secondaryGroups.length}`;
+
+  secondaryGroups.forEach(group => {
+    secondaryGrid.appendChild(createClockTile(group, false));
+  });
+
+  clockContainer.appendChild(secondaryGrid);
+
+  updateTime();
 }
 
 function updateTime() {
@@ -256,12 +337,25 @@ function updateTime() {
     const timeElement = tile.querySelector('.time');
     const weekdayElement = tile.querySelector('.weekday');
 
-    const timeString = new Intl.DateTimeFormat('en-NZ', {
+    if (!timeElement || !weekdayElement) return;
+
+    const formatter = new Intl.DateTimeFormat('en-NZ', {
       timeZone: group.timeZone,
       hour: '2-digit',
       minute: '2-digit',
-      hourCycle: 'h23'
-    }).format(now);
+      hour12: timeFormat === '12',
+      hourCycle: timeFormat === '24' ? 'h23' : undefined
+    });
+
+    let timeString = formatter.format(now);
+
+    if (timeFormat === '12') {
+      const parts = timeString.split(' ');
+
+      if (parts.length === 2) {
+        timeString = `${parts[0]} <span class="ampm">${parts[1]}</span>`;
+      }
+    }
 
     const weekdayString = new Intl.DateTimeFormat('en-NZ', {
       timeZone: group.timeZone,
@@ -276,7 +370,7 @@ function updateTime() {
 
     const hours = Number(hourString);
 
-    timeElement.textContent = timeString;
+    timeElement.innerHTML = timeString;
     weekdayElement.textContent = weekdayString;
 
     tile.classList.toggle('daytime', hours >= 7 && hours < 18);
@@ -289,7 +383,7 @@ function renderSelector() {
   citySelector.innerHTML = '';
 
   const regions = [
-    { title: 'New Zealand', codes: ['AKL', 'WLG', 'CHC'] },
+    { title: 'New Zealand', codes: ['AKL', 'NZD', 'CHC'] },
     { title: 'Asia', codes: ['TPE', 'PVG', 'NRT', 'HKG', 'SIN', 'DPS'] },
     { title: 'Australia', codes: ['SYD', 'MEL', 'BNE', 'PER', 'OOL', 'ADE', 'MCY'] },
     { title: 'Americas', codes: ['SFO', 'LAX', 'HNL', 'YVR', 'HOU', 'JFK'] },
@@ -339,11 +433,12 @@ function renderSelector() {
         );
 
         const wouldAddNewTile = !selectedOffsets.has(cityOffset);
+        const maxTiles = getMaxTiles();
 
         if (checkbox.checked) {
-          if (wouldAddNewTile && selectedOffsets.size >= 10) {
+          if (wouldAddNewTile && selectedOffsets.size >= maxTiles) {
             checkbox.checked = false;
-            showMessage('Maximum 10 timezone tiles only.');
+            showMessage(`Maximum ${maxTiles} timezone tiles only.`);
             return;
           }
 
@@ -388,15 +483,17 @@ function renderSelector() {
 function renderPrimarySelect() {
   primarySelect.innerHTML = '';
 
-  selectedCodes.forEach(code => {
-    const city = getCity(code);
-    if (!city) return;
+  const selectedCitiesSorted = [...selectedCodes]
+    .map(getCity)
+    .filter(Boolean)
+    .sort((a, b) => getOffsetMinutes(b.timeZone) - getOffsetMinutes(a.timeZone));
 
+  selectedCitiesSorted.forEach(city => {
     const option = document.createElement('option');
     option.value = city.code;
     option.textContent = `${city.code} — ${city.name}`;
     option.selected = city.code === primaryCode;
-
+    
     primarySelect.appendChild(option);
   });
 
@@ -428,6 +525,8 @@ function showMessage(text) {
 saveSettings();
 renderSelector();
 renderPrimarySelect();
+applyTimeFormatClass();
+renderTimeFormatToggle();
 renderClocks();
 
 setInterval(updateTime, 1000);
