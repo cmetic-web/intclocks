@@ -72,7 +72,6 @@ body:-webkit-full-screen,
 .viewer:-webkit-full-screen {
   background: var(--page-bg) !important;
 }
-
 /* MAIN DASHBOARD GRID */
 .clock-container {
   display: grid;
@@ -88,7 +87,6 @@ body:-webkit-full-screen,
 
   box-sizing: border-box;
 }
-
 /* Allows secondary clocks to sit inside main grid */
 .secondary-grid {
   display: contents;
@@ -114,7 +112,6 @@ body:-webkit-full-screen,
   box-shadow: 0 0 1rem rgba(68, 0, 153, 0.45);
   container-type: size;
 }
-
 /* PRIMARY TILE: top left, double tile width */
 .primarycity {
   grid-column: 1 / span 4;
@@ -218,17 +215,11 @@ h2,
   font-size: clamp(4rem, 7.5vw, 10rem);
 }
 
-body.format-12 .time {
-  font-size: clamp(2.4rem, 5vw, 6.8rem);
-}
-
 .ampm {
   font-size: 0.28em;
-  vertical-align: super;
-  margin-left: 0.1em;
+  margin-left: -0.5em;
   letter-spacing: 0;
 }
-
 /* DAYTIME THEME */
 .clock.daytime {
   background: var(--day-bg);
@@ -246,7 +237,6 @@ body.format-12 .time {
 .clock.daytime .time {
   color: var(--cyan);
 }
-
 /* NIGHT THEME */
 .clock:not(.daytime) {
   background: var(--night-bg);
@@ -276,14 +266,12 @@ body.format-12 .time {
 .primarycity.daytime .time {
   color: var(--cyan);
 }
-
 /* PRIMARY NIGHT */
 .primarycity:not(.daytime) {
   background: rgba(34, 21, 81, 0.95);
   border-color: var(--purple-light);
   box-shadow: 0 0 1.8rem rgba(197, 180, 227, 0.45);
 }
-
 /* SETTINGS BUTTON */
 .settings-btn {
   position: fixed;
@@ -298,17 +286,22 @@ body.format-12 .time {
   border-radius: 50%;
   font-size: 1.4rem;
   cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
+.viewer:hover .settings-btn {
+  opacity: 1;
+}
 /* FULLSCREEN BUTTON */
 .fullscreen-btn {
   position: fixed;
-  top: 4.5rem;
+  top: 4rem;
   right: 1rem;
   z-index: 40;
   width: 3rem;
   height: 3rem;
-  background: var(--page-bg);
+  background: transparent;
   color: white;
   border: none;
   border-radius: 50%;
@@ -509,7 +502,6 @@ body.format-12 .time {
   transform: scale(1.2);
   margin-right: 0.6rem;
 }
-
 /* HIDE LESS IMPORTANT ELEMENTS FIRST */
 @media (max-height: 600px) {
   .clock::after {
@@ -525,7 +517,6 @@ body.format-12 .time {
     display: block;
   }
 }
-
 /* MOBILE */
 @media (max-width: 700px) {
   body {
@@ -595,25 +586,21 @@ body.format-12 .time {
   .region-title {
     font-size: 1.3rem;
   }
-}
-/*
-@container (max-height: 170px) {
-  .weekday {
+
+  .clock::after {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    font-size: clamp(2rem, 2.8vw, 3rem);
+    line-height: 1;
+    opacity: 0.9;
+  }
+
+  .fullscreen-btn {
     display: none;
   }
-}
 
-@container (max-height: 130px) {
-  .clock {
-    justify-content: center;
-  }
-
-  .region {
-    flex: 0;
-  }
-
-  h2 {
-    margin-bottom: 0.4rem;
+  body.format-12 .time {
+    font-size: clamp(3.6rem, 6vw, 7.6rem);
   }
 }
-/*

@@ -3,7 +3,6 @@ const cities = [
   { code: 'AKL', name: 'Auckland', timeZone: 'Pacific/Auckland', region: 'New Zealand' },
   { code: 'CHC', name: 'Christchurch', timeZone: 'Pacific/Auckland', region: 'New Zealand' },
   { code: 'NZD', name: 'New Zealand', timeZone: 'Pacific/Auckland', region: 'New Zealand' },
-
   // Asia
   { code: 'TPE', name: 'Taipei', timeZone: 'Asia/Taipei', region: 'Asia' },
   { code: 'PVG', name: 'Shanghai', timeZone: 'Asia/Shanghai', region: 'Asia' },
@@ -11,7 +10,6 @@ const cities = [
   { code: 'HKG', name: 'Hong Kong', timeZone: 'Asia/Hong_Kong', region: 'Asia' },
   { code: 'SIN', name: 'Singapore', timeZone: 'Asia/Singapore', region: 'Asia' },
   { code: 'DPS', name: 'Bali Denpasar', timeZone: 'Asia/Makassar', region: 'Asia' },
-
   // Australia
   { code: 'SYD', name: 'Sydney', timeZone: 'Australia/Sydney', region: 'Australia' },
   { code: 'MEL', name: 'Melbourne', timeZone: 'Australia/Melbourne', region: 'Australia' },
@@ -20,7 +18,6 @@ const cities = [
   { code: 'OOL', name: 'Gold Coast', timeZone: 'Australia/Brisbane', region: 'Australia' },
   { code: 'ADE', name: 'Adelaide', timeZone: 'Australia/Adelaide', region: 'Australia' },
   { code: 'MCY', name: 'Sunshine Coast', timeZone: 'Australia/Brisbane', region: 'Australia' },
-
   // Americas
   { code: 'SFO', name: 'San Francisco', timeZone: 'America/Los_Angeles', region: 'Americas' },
   { code: 'LAX', name: 'Los Angeles', timeZone: 'America/Los_Angeles', region: 'Americas' },
@@ -28,7 +25,6 @@ const cities = [
   { code: 'YVR', name: 'Vancouver', timeZone: 'America/Vancouver', region: 'Americas' },
   { code: 'HOU', name: 'Houston', timeZone: 'America/Chicago', region: 'Americas' },
   { code: 'JFK', name: 'New York JFK', timeZone: 'America/New_York', region: 'Americas' },
-
   // Pacific Islands
   { code: 'RAR', name: 'Rarotonga', timeZone: 'Pacific/Rarotonga', region: 'Pacific Islands' },
   { code: 'NAN', name: 'Nadi Fiji', timeZone: 'Pacific/Fiji', region: 'Pacific Islands' },
@@ -39,10 +35,10 @@ const cities = [
   { code: 'PPT', name: 'Tahiti', timeZone: 'Pacific/Tahiti', region: 'Pacific Islands' }
 ];
 
-const DEFAULT_SELECTED = ['AKL', 'SYD', 'NRT', 'LAX'];
+const DEFAULT_SELECTED = ['AKL', 'SYD', 'SIN', 'LAX', 'RAR'];
 const DEFAULT_PRIMARY = 'AKL';
 const MIN_CITIES = 3;
-const MAX_TILES = 10;
+const MAX_TILES = getMaxTiles();
 const MAX_CITIES_PER_TIMEZONE = 3;
 
 let selectedCodes = JSON.parse(localStorage.getItem('selectedCities')) || DEFAULT_SELECTED;
@@ -91,7 +87,7 @@ function getMaxTiles() {
   const isUltraWide = window.matchMedia('(min-aspect-ratio: 2 / 1)').matches;
   const isMobile = window.matchMedia('(max-width: 700px)').matches;
 
-  return isUltraWide || isMobile ? 9 : 11;
+  return isUltraWide || isMobile ? 7 : 7;
 }
 
 function saveSettings() {
@@ -344,9 +340,9 @@ function updateTime() {
     timeElement.innerHTML = timeString;
     weekdayElement.textContent = weekdayString;
 
-    tile.classList.toggle('daytime', hours >= 7 && hours < 18);
-    timeElement.className = `time ${hours >= 7 && hours < 18 ? 'am-time' : 'pm-time'}`;
-    weekdayElement.className = `weekday ${hours >= 7 && hours < 18 ? 'weekday-daytime' : 'weekday-nighttime'}`;
+    tile.classList.toggle('daytime', hours >= 6 && hours < 18);
+    timeElement.className = `time ${hours >= 6 && hours < 18 ? 'am-time' : 'pm-time'}`;
+    weekdayElement.className = `weekday ${hours >= 6 && hours < 18 ? 'weekday-daytime' : 'weekday-nighttime'}`;
   });
 }
 
@@ -421,11 +417,19 @@ function renderSelector() {
 
           selectedCodes.push(city.code);
         } else {
-          if (selectedCodes.length <= 3) {
+          const remainingCities = selectedCodes
+            .filter(code => code !== city.code)
+            .map(getCity)
+            .filter(Boolean);
+
+          const remainingOffsets = new Set(
+            remainingCities.map(c => getOffsetMinutes(c.timeZone))
+          );
+
+          if (remainingOffsets.size < 5) {
             checkbox.checked = true;
-            showMessage('Minimum 3 cities required.');
-            return;
-          }
+            showMessage('Minimum 5 timezones required.');
+            return;}
 
           selectedCodes = selectedCodes.filter(selectedCode => selectedCode !== city.code);
 
