@@ -69,7 +69,12 @@ const layoutMap = {
   6: [[5, 1], [7, 1], [1, 2], [3, 2], [5, 2], [7, 2]],
   7: [[5, 1], [1, 2], [3, 2], [5, 2], [1, 3], [3, 3], [5, 3]],
   8: [[5, 1], [2, 2], [4, 2], [6, 2], [1, 3], [3, 3], [5, 3], [7, 3]],
-  9: [[5, 1], [1, 2], [3, 2], [5, 2], [7, 2], [1, 3], [3, 3], [5, 3], [7, 3]]
+  9: [[5, 1], [1, 2], [3, 2], [5, 2], [7, 2], [1, 3], [3, 3], [5, 3], [7, 3]],
+  10: [
+    [5, 1], [7, 1],                   // row 1 (without primary)
+    [1, 2], [3, 2], [5, 2], [7, 2],   // row 2 (4 tiles)
+    [1, 3], [3, 3], [5, 3], [7, 3]    // row 3 (4 tiles)
+  ]
 };
 
 selectedCodes = selectedCodes.filter(code => getCity(code));
@@ -86,7 +91,7 @@ function getMaxTiles() {
   const isUltraWide = window.matchMedia('(min-aspect-ratio: 2 / 1)').matches;
   const isMobile = window.matchMedia('(max-width: 700px)').matches;
 
-  return isUltraWide || isMobile ? 9 : 10;
+  return isUltraWide || isMobile ? 9 : 11;
 }
 
 function saveSettings() {
@@ -231,7 +236,14 @@ function groupSelectedCities() {
 
 function createClockTile(group, isPrimary) {
   const clock = document.createElement('div');
-  clock.className = isPrimary ? 'clock primarycity' : 'clock';
+  const cityCount = group.cities.length;
+
+  clock.className = [
+    'clock',
+    isPrimary ? 'primarycity' : '',
+    cityCount === 2 ? 'two-cities' : '',
+    cityCount >= 3 ? 'three-cities' : ''
+  ].filter(Boolean).join(' ');
 
   clock.innerHTML = `
     <h2>${group.label}</h2>

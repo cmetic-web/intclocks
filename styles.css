@@ -12,14 +12,12 @@
   --page-bg: #192428;
   --night-bg: rgba(34, 21, 81, 0.82);
   --day-bg: rgba(0, 176, 185, 0.18);
-
   --purple-dark: #221551;
   --purple: #440099;
   --purple-light: #C5B4E3;
   --cyan: #00B0B9;
   --teal: #008392;
   --red: #C8102E;
-
   --gap: clamp(1rem, 2vw, 2.4rem);
   --safe-top: clamp(5.5rem, 8vh, 7rem);
   --safe-bottom: clamp(3rem, 6vh, 5rem);
@@ -81,10 +79,8 @@ body:-webkit-full-screen,
   grid-template-columns: repeat(8, minmax(0, 1fr));
   grid-auto-rows: minmax(0, 1fr);
   gap: var(--gap);
-
   width: 100vw;
   height: 100vh;
-
   padding:
     var(--safe-top)
     clamp(1.5rem, 2vw, 3rem)
@@ -102,38 +98,42 @@ body:-webkit-full-screen,
   grid-column: var(--col) / span 2;
   grid-row: var(--row);
 }
-
 /* TILE BASE */
 .clock {
   position: relative;
-
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
   min-width: 0;
   min-height: 0;
-
   padding: clamp(1rem, 1.5vw, 2rem);
-
   border-radius: clamp(1rem, 1.4vw, 2rem);
   border: 0.22vw solid var(--purple);
-
   overflow: hidden;
   background: var(--night-bg);
   box-shadow: 0 0 1rem rgba(68, 0, 153, 0.45);
+  container-type: size;
 }
 
 /* PRIMARY TILE: top left, double tile width */
 .primarycity {
   grid-column: 1 / span 4;
   grid-row: 1;
-
   border-color: var(--cyan);
   background: rgba(0, 176, 185, 0.24);
   box-shadow: 0 0 1.6rem rgba(0, 176, 185, 0.55);
 }
 
+.clock.three-cities h2 {
+  font-size: clamp(1.2rem, 2vw, 2.8rem);
+  letter-spacing: -0.04em;
+  padding-right: 3.2rem;
+}
+
+.clock.two-cities h2 {
+  font-size: clamp(1.5rem, 2.5vw, 3.4rem);
+  letter-spacing: -0.02em;
+}
 /* SUN / MOON ICONS */
 .clock::after {
   position: absolute;
@@ -162,16 +162,22 @@ body:-webkit-full-screen,
 h2 {
   margin: 0;
   padding-right: 2rem;
-
   font-family: 'ClockFont-Bold', sans-serif;
   font-size: clamp(1.5rem, 2.7vw, 4rem);
   line-height: 1;
-
   color: white;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: left;
+}
+
+h2,
+.time {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .primarycity h2 {
@@ -184,11 +190,11 @@ h2 {
   justify-content: space-between;
   flex: 1;
   min-height: 0;
+  min-width: 0;
 }
 
 .weekday {
   margin: 0;
-
   font-size: clamp(0.8rem, 1.2vw, 1.5rem);
   line-height: 1;
   text-transform: uppercase;
@@ -199,15 +205,12 @@ h2 {
 
 .time {
   margin: 0;
-
   font-family: 'ClockFont-Bold', sans-serif;
   font-size: clamp(3.2rem, 6.5vw, 8.8rem);
   line-height: 0.9;
   letter-spacing: -0.18vw;
-
   white-space: nowrap;
   text-align: left;
-
   color: var(--cyan);
 }
 
@@ -216,11 +219,11 @@ h2 {
 }
 
 body.format-12 .time {
-  font-size: clamp(2.8rem, 5.8vw, 7.6rem);
+  font-size: clamp(2.4rem, 5vw, 6.8rem);
 }
 
 .ampm {
-  font-size: 0.32em;
+  font-size: 0.28em;
   vertical-align: super;
   margin-left: 0.1em;
   letter-spacing: 0;
@@ -287,16 +290,12 @@ body.format-12 .time {
   top: 1rem;
   right: 1rem;
   z-index: 40;
-
   width: 3rem;
   height: 3rem;
-
   background: var(--purple);
   color: white;
-
   border: none;
   border-radius: 50%;
-
   font-size: 1.4rem;
   cursor: pointer;
 }
@@ -307,19 +306,14 @@ body.format-12 .time {
   top: 4.5rem;
   right: 1rem;
   z-index: 40;
-
   width: 3rem;
   height: 3rem;
-
   background: var(--page-bg);
   color: white;
-
   border: none;
   border-radius: 50%;
-
   font-size: 1.3rem;
   cursor: pointer;
-
   opacity: 0;
   transition: opacity 0.2s ease;
 }
@@ -339,21 +333,15 @@ body.format-12 .time {
   top: 1rem;
   right: 5rem;
   z-index: 50;
-
   width: min(32rem, 88vw);
   max-height: calc(100vh - 2rem);
   overflow-y: auto;
-
   background: #111;
   color: white;
-
   border: 0.25rem solid var(--purple);
   border-radius: 1rem;
-
   padding: 1rem;
-
   box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.8);
-
   font-family: Arial, sans-serif;
 }
 
@@ -608,3 +596,24 @@ body.format-12 .time {
     font-size: 1.3rem;
   }
 }
+/*
+@container (max-height: 170px) {
+  .weekday {
+    display: none;
+  }
+}
+
+@container (max-height: 130px) {
+  .clock {
+    justify-content: center;
+  }
+
+  .region {
+    flex: 0;
+  }
+
+  h2 {
+    margin-bottom: 0.4rem;
+  }
+}
+/*
