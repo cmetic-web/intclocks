@@ -61,6 +61,17 @@ const resetBtn = document.getElementById('resetBtn');
 const format24 = document.getElementById('format24');
 const format12 = document.getElementById('format12');
 
+const layoutMap = {
+  2: [[1, 2], [3, 2]],
+  3: [[1, 2], [3, 2], [5, 2]],
+  4: [[1, 2], [3, 2], [5, 2], [7, 2]],
+  5: [[5, 1], [1, 2], [3, 2], [5, 2], [7, 2]],
+  6: [[5, 1], [7, 1], [1, 2], [3, 2], [5, 2], [7, 2]],
+  7: [[5, 1], [1, 2], [3, 2], [5, 2], [1, 3], [3, 3], [5, 3]],
+  8: [[5, 1], [2, 2], [4, 2], [6, 2], [1, 3], [3, 3], [5, 3], [7, 3]],
+  9: [[5, 1], [1, 2], [3, 2], [5, 2], [7, 2], [1, 3], [3, 3], [5, 3], [7, 3]]
+};
+
 selectedCodes = selectedCodes.filter(code => getCity(code));
 
 if (selectedCodes.length < MIN_CITIES) {
@@ -159,66 +170,6 @@ function toggleFullscreen() {
 
 function getOffsetMinutes(timeZone) {
   const now = new Date();
-  
-  const parts = new Intl.DateTimeFormat('en-NZ', {
-    timeZone,
-    hourCycle: 'h23',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit'
-  }).formatToParts(now);
-
-  const data = {};
-  parts.forEach(part => {
-    if (part.type !== 'literal') {
-      data[part.type] = part.value;
-    }
-  });
-
-  const asUTC = Date.UTC(
-    Number(data.year),
-    Number(data.month) - 1,
-    Number(data.day),
-    Number(data.hour),
-    Number(data.minute),
-    Number(data.second)
-  );
-
-  return Math.round((asUTC - now.getTime()) / 60000);
-}
-
-function renderTimeFormatToggle() {
-  format24.checked = timeFormat === '24';
-  format12.checked = timeFormat === '12';
-}
-
-format24.addEventListener('change', () => {
-  timeFormat = '24';
-  localStorage.setItem('timeFormat', timeFormat);
-  document.body.classList.toggle('format-12', timeFormat === '12');
-  renderTimeFormatToggle();
-  updateTime();
-});
-
-format12.addEventListener('change', () => {
-  timeFormat = '12';
-  localStorage.setItem('timeFormat', timeFormat);
-  document.body.classList.toggle('format-12', timeFormat === '12');
-  renderTimeFormatToggle();
-  updateTime();
-});
-
-function gridAreaFromNumber(number) {
-  const row = Math.ceil(number / 3);
-  const col = ((number - 1) % 3) + 1;
-  return `${row} / ${col} / ${row + 1} / ${col + 1}`;
-}
-
-function getOffsetMinutes(timeZone) {
-  const now = new Date();
 
   const parts = new Intl.DateTimeFormat('en-NZ', {
     timeZone,
@@ -272,7 +223,7 @@ function groupSelectedCities() {
   return Object.values(groups)
     .map(group => ({
       ...group,
-      label: group.cities.map(city => city.code).join(' / '),
+      label: group.cities.map(city => city.code).join(' | '),
       isPrimary: group.cities.some(city => city.code === primaryCode)
     }))
     .sort((a, b) => b.offset - a.offset);
@@ -309,8 +260,16 @@ function renderClocks() {
   const secondaryGrid = document.createElement('div');
 	secondaryGrid.className = `secondary-grid secondary-count-${secondaryGroups.length}`;
 
-  secondaryGroups.forEach(group => {
-    secondaryGrid.appendChild(createClockTile(group, false));
+  const layout = layoutMap[secondaryGroups.length] || layoutMap[9];
+
+  secondaryGroups.forEach((group, index) => {
+    const tile = createClockTile(group, false);
+    const [col, row] = layout[index];
+
+    tile.style.setProperty('--col', col);
+    tile.style.setProperty('--row', row);
+
+    secondaryGrid.appendChild(tile);
   });
 
   clockContainer.appendChild(secondaryGrid);
