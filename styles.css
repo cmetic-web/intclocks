@@ -72,6 +72,7 @@ body:-webkit-full-screen,
 .viewer:-webkit-full-screen {
   background: var(--page-bg) !important;
 }
+
 /* MAIN DASHBOARD GRID */
 .clock-container {
   display: grid;
@@ -79,14 +80,13 @@ body:-webkit-full-screen,
   grid-auto-rows: minmax(0, 1fr);
   gap: var(--gap);
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   padding:
-    var(--safe-top)
-    clamp(1.5rem, 2vw, 3rem)
-    var(--safe-bottom);
+    var(--safe-top) clamp(1.5rem, 2vw, 3rem) var(--safe-bottom);
 
   box-sizing: border-box;
 }
+
 /* Allows secondary clocks to sit inside main grid */
 .secondary-grid {
   display: contents;
@@ -96,6 +96,7 @@ body:-webkit-full-screen,
   grid-column: var(--col) / span 2;
   grid-row: var(--row);
 }
+
 /* TILE BASE */
 .clock {
   position: relative;
@@ -111,7 +112,19 @@ body:-webkit-full-screen,
   background: var(--night-bg);
   box-shadow: 0 0 1rem rgba(68, 0, 153, 0.45);
   container-type: size;
+  /* Clickable */
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
 }
+
+/* Tile hover effect */
+.clock:hover {
+  transform: translateY(-2px);
+}
+
 /* PRIMARY TILE: top left, double tile width */
 .primarycity {
   grid-column: 1 / span 4;
@@ -131,6 +144,7 @@ body:-webkit-full-screen,
   font-size: clamp(1.5rem, 2.5vw, 3.4rem);
   letter-spacing: -0.02em;
 }
+
 /* SUN / MOON ICONS */
 .clock::after {
   position: absolute;
@@ -216,10 +230,11 @@ h2,
 }
 
 .ampm {
-  font-size: 0.28em;
+  font-size: clamp(0.8rem, 1.2vw, 1.5rem);
   margin-left: -0.5em;
   letter-spacing: 0;
 }
+
 /* DAYTIME THEME */
 .clock.daytime {
   background: var(--day-bg);
@@ -237,6 +252,7 @@ h2,
 .clock.daytime .time {
   color: var(--cyan);
 }
+
 /* NIGHT THEME */
 .clock:not(.daytime) {
   background: var(--night-bg);
@@ -246,6 +262,7 @@ h2,
 .clock:not(.daytime) h2 {
   color: white;
 }
+
 .clock:not(.daytime) .weekday,
 .clock:not(.daytime) .time {
   color: var(--purple-light);
@@ -266,12 +283,36 @@ h2,
 .primarycity.daytime .time {
   color: var(--cyan);
 }
+
 /* PRIMARY NIGHT */
 .primarycity:not(.daytime) {
   background: rgba(34, 21, 81, 0.95);
   border-color: var(--purple-light);
   box-shadow: 0 0 1.8rem rgba(197, 180, 227, 0.45);
 }
+
+.primary-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.primary-pill {
+  border: none;
+  border-radius: 999px;
+  padding: 0.55rem 0.9rem;
+  background: white;
+  color: #222;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.primary-pill.active {
+  background: #7c3aed;
+  color: white;
+}
+
 /* SETTINGS BUTTON */
 .settings-btn {
   position: fixed;
@@ -279,12 +320,12 @@ h2,
   right: 1rem;
   z-index: 40;
   width: 3rem;
-  height: 3rem;
+  min-height: 3rem;
   background: var(--purple);
   color: white;
   border: none;
   border-radius: 50%;
-  font-size: 1.4rem;
+  font-size: clamp(1.2rem, 2vw, 3rem);
   cursor: pointer;
   opacity: 0;
   transition: opacity 0.2s ease;
@@ -293,6 +334,7 @@ h2,
 .viewer:hover .settings-btn {
   opacity: 1;
 }
+
 /* FULLSCREEN BUTTON */
 .fullscreen-btn {
   position: fixed;
@@ -300,12 +342,12 @@ h2,
   right: 1rem;
   z-index: 40;
   width: 3rem;
-  height: 3rem;
+  min-height: 3rem;
   background: transparent;
   color: white;
   border: none;
   border-radius: 50%;
-  font-size: 1.3rem;
+  font-size: clamp(1.2rem, 2vw, 3rem);
   cursor: pointer;
   opacity: 0;
   transition: opacity 0.2s ease;
@@ -335,7 +377,6 @@ h2,
   border-radius: 1rem;
   padding: 1rem;
   box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.8);
-  font-family: Arial, sans-serif;
 }
 
 .settings-panel.hidden,
@@ -362,9 +403,12 @@ h2,
   color: white;
 
   border: none;
-  border-radius: 0.4rem;
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  display: flex;
+  justify-content: flex-end;
 
-  font-size: 1.2rem;
+  font-size: clamp(0.95rem, 1.2vw, 1.2rem);
   cursor: pointer;
 }
 
@@ -389,20 +433,58 @@ h2,
 }
 
 .reset-btn {
-  padding: 0.6rem 0.8rem;
-
   background: var(--red);
   color: white;
+  cursor: pointer;
 
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  background: var(--red);
+  color: white;
+  font-size: clamp(0.95rem, 1.2vw, 1.2rem);
+  font-weight: 600;
 
-  font-weight: bold;
-  cursor: pointer;
+  display: flex;
+  margin-left: auto;
+  justify-content: flex-end;
 }
 
 .reset-btn:hover {
   background: #e31436;
+}
+
+.time-format-toggle {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.format-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  background: white;
+  color: #222;
+  font-size: clamp(0.95rem, 1.2vw, 1.2rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.format-btn.active {
+  background: var(--purple);
+  color: white;
+}
+
+.format-btn:hover {
+  transform: translateY(-1px);
+}
+
+.format-btn:active {
+  transform: translateY(0);
 }
 
 .format-toggle {
@@ -412,7 +494,7 @@ h2,
 
   margin: 0.7rem 0;
 
-  font-size: 0.9rem;
+  font-size: clamp(0.9rem, 1.2vw, 1.2rem);
 }
 
 .format-toggle span {
@@ -434,7 +516,7 @@ h2,
 
   color: #BBE5E9;
 
-  font-size: 0.85rem;
+  font-size: clamp(0.85rem, 1.2vw, 1.2rem);
   line-height: 1.35;
 }
 
@@ -450,7 +532,7 @@ h2,
   border: 1px solid rgba(200, 16, 46, 0.35);
   border-radius: 0.4rem;
 
-  font-size: 0.85rem;
+  font-size: clamp(0.85rem, 1.2vw, 1.2rem);
 
   opacity: 0;
   transition: opacity 0.25s ease;
@@ -476,7 +558,7 @@ h2,
 
   border-bottom: 1px solid var(--purple);
 
-  font-size: 1.1rem;
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
   font-weight: bold;
 }
 
@@ -491,7 +573,7 @@ h2,
 
   color: white;
 
-  font-size: 1rem;
+  font-size: clamp(1rem, 2vw, 1.25rem);
   line-height: 1.4;
 
   cursor: pointer;
@@ -502,6 +584,7 @@ h2,
   transform: scale(1.2);
   margin-right: 0.6rem;
 }
+
 /* HIDE LESS IMPORTANT ELEMENTS FIRST */
 @media (max-height: 600px) {
   .clock::after {
@@ -517,6 +600,7 @@ h2,
     display: block;
   }
 }
+
 /* MOBILE */
 @media (max-width: 700px) {
   body {
@@ -559,7 +643,7 @@ h2,
   }
 
   .weekday {
-    font-size: 0.9rem;
+    font-size: clamp(0.9rem, 1.2vw, 1.2rem);
   }
 
   .settings-panel {
@@ -580,11 +664,11 @@ h2,
   }
 
   .city-option {
-    font-size: 1.25rem;
+    font-size: clamp(1.25rem, 2.5vw, 1.5rem);
   }
 
   .region-title {
-    font-size: 1.3rem;
+    font-size: clamp(1.3rem, 2.5vw, 1.6rem);
   }
 
   .clock::after {

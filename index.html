@@ -1,53 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>World Clock</title>
-  <link rel="stylesheet" href="styles.css"/>
+  <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
-<div class="viewer">
-<button id="settingsBtn" class="settings-btn">⚙</button>
 
-  <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶</button>
+  <div class="viewer">
+    <button id="settingsBtn" class="settings-btn">⚙</button>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶</button>
 
-<div id="clockContainer" class="clock-container"></div>
+    <div id="clockContainer" class="clock-container"></div>
 
-<div id="settingsPanel" class="settings-panel hidden">
+    <div id="settingsPanel" class="settings-panel hidden">
+      <div class="format-toggle">
+        <div class="time-format-toggle">
+          <button id="format24Btn" class="format-btn active">
+            24:00
+          </button>
 
-  <div class="settings-header">
-    <h3>Select cities to highlight</h3>
-    <button id="closeSettingsBtn">x</button>
+          <button id="format12Btn" class="format-btn">
+            12:00
+          </button>
+        </div>
+        <button id="resetBtn" class="reset-btn">Default</button>
+        <button id="closeSettingsBtn">x</button>
+      </div>
+
+      <div id="message" class="message"></div>
+
+      <div id="citySelector" class="city-selector"></div>
+
+      <div class="top-controls">
+        <h3 class="settings-header hint">Select your city on tile or from the list</h3>
+        <select id="primarySelect"></select>
+      </div>
+    </div>
   </div>
-
-  <div class="top-controls">
-    <select id="primarySelect"></select>
-    <button id="resetBtn" class="reset-btn">Reset</button>
-  </div>
-
-  <div class="format-toggle">
-    <span>Time format</span>
-
-    <label>
-      <input type="radio" name="timeFormat" value="24" id="format24">
-      24:00
-    </label>
-
-    <label>
-      <input type="radio" name="timeFormat" value="12" id="format12">
-      12:00
-    </label>
-  </div>
-
-  <p class="hint">
-    Displays 5 to 7 timezones • Max 3 cities per timezone
-  </p>
-  <div id="message" class="message"></div>
-  <div id="citySelector" class="city-selector"></div>
-</div>
-</div>
-<script src="scripts.js"></script>
+  <script src="scripts.js"></script>
 
 </body>
+
 </html>

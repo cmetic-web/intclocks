@@ -54,8 +54,8 @@ const settingsBtn = document.getElementById('settingsBtn');
 const settingsPanel = document.getElementById('settingsPanel');
 const closeSettingsBtn = document.getElementById('closeSettingsBtn');
 const resetBtn = document.getElementById('resetBtn');
-const format24 = document.getElementById('format24');
-const format12 = document.getElementById('format12');
+const format24Btn = document.getElementById('format24Btn');
+const format12Btn = document.getElementById('format12Btn');
 
 const layoutMap = {
   2: [[1, 2], [3, 2]],
@@ -63,14 +63,7 @@ const layoutMap = {
   4: [[1, 2], [3, 2], [5, 2], [7, 2]],
   5: [[5, 1], [1, 2], [3, 2], [5, 2], [7, 2]],
   6: [[5, 1], [7, 1], [1, 2], [3, 2], [5, 2], [7, 2]],
-  7: [[5, 1], [1, 2], [3, 2], [5, 2], [1, 3], [3, 3], [5, 3]],
-  8: [[5, 1], [2, 2], [4, 2], [6, 2], [1, 3], [3, 3], [5, 3], [7, 3]],
-  9: [[5, 1], [1, 2], [3, 2], [5, 2], [7, 2], [1, 3], [3, 3], [5, 3], [7, 3]],
-  10: [
-    [5, 1], [7, 1],                   // row 1 (without primary)
-    [1, 2], [3, 2], [5, 2], [7, 2],   // row 2 (4 tiles)
-    [1, 3], [3, 3], [5, 3], [7, 3]    // row 3 (4 tiles)
-  ]
+  7: [[5, 1], [1, 2], [3, 2], [5, 2], [1, 3], [3, 3], [5, 3]]
 };
 
 selectedCodes = selectedCodes.filter(code => getCity(code));
@@ -105,14 +98,14 @@ function applyTimeFormatClass() {
 }
 
 function renderTimeFormatToggle() {
-  if (!format24 || !format12) return;
+  if (!format24Btn || !format12Btn) return;
 
-  format24.checked = timeFormat === '24';
-  format12.checked = timeFormat === '12';
+  format24Btn.classList.toggle('active', timeFormat === '24');
+  format12Btn.classList.toggle('active', timeFormat === '12');
 }
 
-if (format24 && format12) {
-  format24.addEventListener('change', () => {
+if (format24Btn && format12Btn) {
+  format24Btn.addEventListener('click', () => {
     timeFormat = '24';
     saveSettings();
     applyTimeFormatClass();
@@ -120,7 +113,7 @@ if (format24 && format12) {
     updateTime();
   });
 
-  format12.addEventListener('change', () => {
+  format12Btn.addEventListener('click', () => {
     timeFormat = '12';
     saveSettings();
     applyTimeFormatClass();
@@ -247,7 +240,14 @@ function createClockTile(group, isPrimary) {
       <div class="weekday"></div>
       <div class="time"></div>
     </div>
-  `;
+  `
+  clock.addEventListener('click', () => {
+    primaryCode = group.cities[0].code;
+
+    saveSettings();
+    renderPrimarySelect();
+    renderClocks();
+  });;
 
   return clock;
 }
@@ -266,7 +266,7 @@ function renderClocks() {
   clockContainer.appendChild(createClockTile(primaryGroup, true));
 
   const secondaryGrid = document.createElement('div');
-	secondaryGrid.className = `secondary-grid secondary-count-${secondaryGroups.length}`;
+  secondaryGrid.className = `secondary-grid secondary-count-${secondaryGroups.length}`;
 
   const layout = layoutMap[secondaryGroups.length] || layoutMap[9];
 
@@ -337,9 +337,27 @@ function updateTime() {
 
     const hours = Number(hourString);
 
-    timeElement.innerHTML = timeString;
-    weekdayElement.textContent = weekdayString;
+    const diff = group.offset - primaryGroup.offset;
 
+    let diffLabel = '';
+
+    if (!group.isPrimary) {
+      const sign = diff >= 0 ? '+' : '-';
+      const absMinutes = Math.abs(diff);
+      const hoursPart = Math.floor(absMinutes / 60);
+      const minutesPart = absMinutes % 60;
+
+      if (minutesPart === 0) {
+        diffLabel = ` [${sign}${hoursPart}hr]`;
+      } else if (hoursPart === 0) {
+        diffLabel = ` [${sign}${minutesPart}min]`;
+      } else {
+        diffLabel = ` [${sign}${hoursPart}h${minutesPart}m]`;
+      }
+    }
+
+    timeElement.innerHTML = timeString;
+    weekdayElement.textContent = `${weekdayString}${diffLabel}`;
     tile.classList.toggle('daytime', hours >= 6 && hours < 18);
     timeElement.className = `time ${hours >= 6 && hours < 18 ? 'am-time' : 'pm-time'}`;
     weekdayElement.className = `weekday ${hours >= 6 && hours < 18 ? 'weekday-daytime' : 'weekday-nighttime'}`;
@@ -429,7 +447,8 @@ function renderSelector() {
           if (remainingOffsets.size < 5) {
             checkbox.checked = true;
             showMessage('Minimum 5 timezones required.');
-            return;}
+            return;
+          }
 
           selectedCodes = selectedCodes.filter(selectedCode => selectedCode !== city.code);
 
@@ -468,7 +487,7 @@ function renderPrimarySelect() {
     option.value = city.code;
     option.textContent = `${city.code} — ${city.name}`;
     option.selected = city.code === primaryCode;
-    
+
     primarySelect.appendChild(option);
   });
 
