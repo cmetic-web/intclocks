@@ -37,7 +37,7 @@ const cities = [
 
 const DEFAULT_SELECTED = ['AKL', 'SYD', 'SIN', 'LAX', 'RAR'];
 const DEFAULT_PRIMARY = 'AKL';
-const MIN_CITIES = 3;
+const MIN_CITIES = 5;
 const MAX_TILES = getMaxTiles();
 const MAX_CITIES_PER_TIMEZONE = 3;
 
@@ -77,10 +77,8 @@ if (!selectedCodes.includes(primaryCode)) {
 }
 
 function getMaxTiles() {
-  const isUltraWide = window.matchMedia('(min-aspect-ratio: 2 / 1)').matches;
   const isMobile = window.matchMedia('(max-width: 700px)').matches;
-
-  return isUltraWide || isMobile ? 7 : 7;
+  return isMobile ? 5 : 7;
 }
 
 function saveSettings() {
@@ -268,7 +266,8 @@ function renderClocks() {
   const secondaryGrid = document.createElement('div');
   secondaryGrid.className = `secondary-grid secondary-count-${secondaryGroups.length}`;
 
-  const layout = layoutMap[secondaryGroups.length] || layoutMap[9];
+  const count = Math.min(secondaryGroups.length, 7);
+  const layout = layoutMap[count];
 
   secondaryGroups.forEach((group, index) => {
     const tile = createClockTile(group, false);
@@ -379,33 +378,60 @@ function renderSelector() {
     const regionBlock = document.createElement('div');
     regionBlock.className = 'region-block';
 
+    // ---------- REGION HEADER ----------
     const heading = document.createElement('div');
     heading.className = 'region-title';
-    heading.textContent = region.title;
-    regionBlock.appendChild(heading);
+
+    const selectedCount = region.codes.filter(code =>
+      selectedCodes.includes(code)
+    ).length;
+    // declare FIRST
+    let expanded = selectedCount > 0;
+
+    const chevron = document.createElement('span');
+    chevron.className = 'region-chevron';
+    chevron.textContent = expanded ? '▾' : '▸';
+
+    const title = document.createElement('span');
+    title.textContent = ` ${region.title} [${selectedCount}]`;
+
+    heading.appendChild(chevron);
+    heading.appendChild(title);
 
     const optionsWrap = document.createElement('div');
     optionsWrap.className = 'region-options';
+    optionsWrap.style.display = expanded ? 'flex' : 'none';
 
+    heading.addEventListener('click', () => {
+      expanded = !expanded;
+      optionsWrap.style.display = expanded ? 'flex' : 'none';
+      chevron.textContent = expanded ? '▾' : '▸';
+    });
+
+    regionBlock.appendChild(heading);
+
+    // ---------- CITY CHIPS ----------
     region.codes.forEach(code => {
       const city = getCity(code);
       if (!city) return;
 
-      const label = document.createElement('label');
-      label.className = 'city-option';
+      const button = document.createElement('button');
+      button.className = 'city-chip';
 
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.value = city.code;
-      checkbox.checked = selectedCodes.includes(city.code);
+      const isSelected = selectedCodes.includes(city.code);
+      if (isSelected) button.classList.add('selected');
 
-      checkbox.addEventListener('change', () => {
+      button.textContent = city.code;
+      button.title = city.name; 
+
+      button.addEventListener('click', () => {
         const cityOffset = getOffsetMinutes(city.timeZone);
 
         const sameTimezoneSelected = selectedCodes
           .map(getCity)
           .filter(selectedCity =>
-            selectedCity && getOffsetMinutes(selectedCity.timeZone) === cityOffset
+            selectedCity &&
+            getOffsetMinutes(selectedCity.timeZone) === cityOffset
           );
 
         const selectedOffsets = new Set(
@@ -420,21 +446,21 @@ function renderSelector() {
         const wouldAddNewTile = !selectedOffsets.has(cityOffset);
         const maxTiles = getMaxTiles();
 
-        if (checkbox.checked) {
+        if (!isSelected) {
+          // ADD
           if (wouldAddNewTile && selectedOffsets.size >= maxTiles) {
-            checkbox.checked = false;
             showMessage(`Maximum ${maxTiles} timezone tiles only.`);
             return;
           }
 
-          if (sameTimezoneSelected.length >= 3) {
-            checkbox.checked = false;
-            showMessage('Maximum 3 cities per shared timezone.');
+          if (sameTimezoneSelected.length >= MAX_CITIES_PER_TIMEZONE) {
+            showMessage(`Maximum ${MAX_CITIES_PER_TIMEZONE} cities per shared timezone.`);
             return;
           }
 
           selectedCodes.push(city.code);
         } else {
+          // REMOVE
           const remainingCities = selectedCodes
             .filter(code => code !== city.code)
             .map(getCity)
@@ -445,12 +471,11 @@ function renderSelector() {
           );
 
           if (remainingOffsets.size < 5) {
-            checkbox.checked = true;
             showMessage('Minimum 5 timezones required.');
             return;
           }
 
-          selectedCodes = selectedCodes.filter(selectedCode => selectedCode !== city.code);
+          selectedCodes = selectedCodes.filter(c => c !== city.code);
 
           if (primaryCode === city.code) {
             primaryCode = selectedCodes[0];
@@ -464,9 +489,7 @@ function renderSelector() {
         showMessage('');
       });
 
-      label.appendChild(checkbox);
-      label.append(` ${city.code} — ${city.name}`);
-      optionsWrap.appendChild(label);
+      optionsWrap.appendChild(button);
     });
 
     regionBlock.appendChild(optionsWrap);

@@ -112,6 +112,7 @@ body:-webkit-full-screen,
   background: var(--night-bg);
   box-shadow: 0 0 1rem rgba(68, 0, 153, 0.45);
   container-type: size;
+  transition: all 0.2s ease;
   /* Clickable */
   cursor: pointer;
   transition:
@@ -133,7 +134,14 @@ body:-webkit-full-screen,
   background: rgba(0, 176, 185, 0.24);
   box-shadow: 0 0 1.6rem rgba(0, 176, 185, 0.55);
 }
+.primarycity:hover {
+  transform: translateY(0px);
+}
 
+.clock:not(.primarycity):hover {
+  opacity: 0.75;
+}
+/*
 .clock.three-cities h2 {
   font-size: clamp(1.2rem, 2vw, 2.8rem);
   letter-spacing: -0.04em;
@@ -144,7 +152,7 @@ body:-webkit-full-screen,
   font-size: clamp(1.5rem, 2.5vw, 3.4rem);
   letter-spacing: -0.02em;
 }
-
+*/
 /* SUN / MOON ICONS */
 .clock::after {
   position: absolute;
@@ -312,7 +320,6 @@ h2,
   background: #7c3aed;
   color: white;
 }
-
 /* SETTINGS BUTTON */
 .settings-btn {
   position: fixed;
@@ -463,8 +470,8 @@ h2,
   border: none;
   border-radius: 10px;
   padding: 0.7rem 1rem;
-  background: white;
-  color: #222;
+  background: var(--page-bg);
+  color: white;
   font-size: clamp(0.95rem, 1.2vw, 1.2rem);
   font-weight: 600;
   cursor: pointer;
@@ -542,6 +549,62 @@ h2,
   opacity: 1;
 }
 
+.city-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  margin: 4px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: var(--page-bg);
+  cursor: pointer;
+  color: white;
+  font-size: 0.875rem;
+  transition: 0.15s ease;
+}
+
+.city-chip:hover {
+  transform: scale(1.04);
+  border-color: var(--cyan);
+}
+
+.city-chip.selected {
+  background: var(--purple);
+  color: white;
+}
+
+.region-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 0 14px;
+}
+
+.region-title {
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.4rem 0;
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  transition: 0.15s ease;
+  gap: 6px;
+}
+
+.region-title.collapsed {
+  opacity: 0.6;
+}
+
+.region-title:hover {
+  opacity: 1;
+  background: rgba(255,255,255,0.05);
+}
+
+.region-title:hover .region-chevron {
+  transform: translateX(2px);
+}
 /* CITY SELECTOR */
 .city-selector {
   display: grid;
