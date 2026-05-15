@@ -1,4 +1,5 @@
 const cities = [
+  { code: 'UTC', name: 'Reference', timeZone: 'Etc/UTC', region: 'Reference' },
   // New Zealand
   { code: 'AKL', name: 'Auckland', timeZone: 'Pacific/Auckland', region: 'New Zealand' },
   { code: 'CHC', name: 'Christchurch', timeZone: 'Pacific/Auckland', region: 'New Zealand' },
@@ -35,7 +36,7 @@ const cities = [
   { code: 'PPT', name: 'Tahiti', timeZone: 'Pacific/Tahiti', region: 'Pacific Islands' }
 ];
 
-const DEFAULT_SELECTED = ['AKL', 'SYD', 'SIN', 'LAX', 'RAR'];
+const DEFAULT_SELECTED = ['AKL', 'MEL', 'SYD', 'HKG', 'SIN', 'LAX', 'HNL', 'RAR', 'UTC', 'JFK'];
 const DEFAULT_PRIMARY = 'AKL';
 const MIN_CITIES = 5;
 const MAX_TILES = getMaxTiles();
