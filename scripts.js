@@ -372,7 +372,8 @@ function renderSelector() {
     { title: 'Asia', codes: ['TPE', 'PVG', 'NRT', 'HKG', 'SIN', 'DPS'] },
     { title: 'Australia', codes: ['SYD', 'MEL', 'BNE', 'PER', 'OOL', 'ADE', 'MCY'] },
     { title: 'Americas', codes: ['SFO', 'LAX', 'HNL', 'YVR', 'HOU', 'JFK'] },
-    { title: 'Pacific Islands', codes: ['RAR', 'NAN', 'NIU', 'APW', 'TBU', 'NOU', 'PPT'] }
+    { title: 'Pacific Islands', codes: ['RAR', 'NAN', 'NIU', 'APW', 'TBU', 'NOU', 'PPT'] },
+    { title: 'UTC', codes: ['UTC'] }
   ];
 
   regions.forEach(region => {
